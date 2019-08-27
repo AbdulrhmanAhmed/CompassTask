@@ -1,0 +1,386 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="title-row d-flex  mb-3 justify-content-between align-items-center">
+    <h5 class="mb-0">List of Users</h5>
+    <a class="btn btn-success px-4" data-toggle="modal" data-target="#ModalAdd" onclick="OpenModal()"><i class="fas fa-plus-circle"></i> Add</a>
+</div>
+<table class="table table-hover dataTable mb-3" id="TblCategory">
+    <thead>
+        <tr>
+            <th class="text-center">index</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Is Active</th>
+            <th class="text-center">actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+
+</table>
+<!-- The Modal of Add  -->
+<div class="modal fade" id="ModalAdd">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title ModalAdd"> Add New User </h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+
+
+            </div>
+
+            <!-- Modal body -->
+
+
+            <div class="modal-body">
+
+                <div id="errorModalAdd" class="alert alert-danger alert-dismissible" role="alert">
+                    <h4>Warning!</h4>
+                    <p> </p>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="Amount" id="name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" name="Amount" id="email" class="form-control" />
+                </div>
+                <input type="hidden" name="name" id="id" />
+
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <label class="custom-control-label" for="RdisActive">Is Active</label>
+                        <input type="checkbox" name="RdisActive" class="custom-control-input" id="RdisActive">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <input type="button" id="BtnAdd" value="Save" class="btn btn-success" onclick="Save(this)" />
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- The Modal of Edit  -->
+<div class="modal fade" id="ModalEdit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title ModalEdit"> Edit User </h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                
+            </div>
+
+            <!-- Modal body -->
+
+
+            <div class="modal-body">
+                <div id="errorModalEdit" class="alert alert-danger alert-dismissible" role="alert">
+                    <h4>Warning!</h4>
+                    <p> </p>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="Amount" id="name1" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" name="Amount" id="email1" class="form-control" />
+                </div>
+                <input type="hidden" name="name" id="id1" />
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <label class="custom-control-label" for="RdisActive1">Is Active</label>
+                        <input type="checkbox" name="RdisActive1" class="custom-control-input" id="RdisActive1">
+                    </div>
+                </div>
+
+                @*@Html.DropDownList("category", ViewBag.category as SelectList);*@
+
+            </div>
+
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <input type="button" id="BtnEdit" value="Edit" class="btn btn-success" onclick="Edit(this)" />
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div id="SuccModal" class="modal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <a class="close" href="#" data-dismiss="modal">&times;</a>
+            <div class="page-body">
+                <div class="head">
+                    <h3 style="margin-top:5px;"></h3>
+                </div>
+
+                <h1 style="text-align:center;">
+                    <div class="checkmark-circle">
+                        <div class="background"></div>
+                        <div class="checkmark draw"></div>
+                    </div><h1>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script src="~/js/jquery.min.js"></script>
+<script src="~/js/bootstrap.min.js"></script>
+<script>
+    function GetCategories() {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:62038/api/User/GetUsers',
+            dataType: "json",
+
+            success: function (DBdata) {
+                var t = $('#TblCategory').DataTable({
+                    "dom": '<"top"f><"mainable"<"table-responsive"t><"row col-12 bottom py-2"<"col-sm-6"i><"col-sm-4"l><"col-sm-2"p>><"clear">>',
+                    //language: {
+                    //	paginate: {
+                    //		next: '&#10095;', // or '→'
+                    //		previous: '&#10094;' // or '←'
+                    //	}
+                    //               },
+                    "pagingType": "simple",
+                    "order": [[1, "asc"]],
+
+                    data: DBdata,
+
+                    destroy: true,
+                    "oLanguage": {
+
+                        "sSearch": 'Search',
+                        "sEmptyTable": 'EmptyTable',
+                        "sInfoEmpty": 'infoEmpty',
+                        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                        "sZeroRecords": 'NoMatching',
+                        "sPaginationType": "full_numbers",
+                    },
+                    "columnDefs":
+                        [
+                            {
+                                "searchable": false,
+                                "orderable": false,
+                                "targets": 0
+                            }
+
+                        ],
+                    columns: [
+
+                        { "data": "id" },
+                        { "data": "name" },
+                        { "data": "email" },
+                        {
+                            "mData": null,
+                            "bSortable": true,
+                            "mRender": function (o) {
+                                if (o.isActive == true) {
+                                    return '<input type="checkbox" disabled="disabled" class="" checked ">'
+                                }
+                                else {
+                                    return '<input type="checkbox" disabled="disabled" class="" ">'
+                                }
+                            }
+                        },
+                        //{ "data": "isActive" },
+                        {
+                            "mData": null,
+                            "bSortable": false,
+                            "mRender": function (o) {
+
+                                return '<div class="d-flex justify-content-center"><a href="" data-toggle="modal" data-target="#ModalEdit" onclick="select(' + o.id + ',' + "\'" + o.name + "\'" + ',' + "\'" + o.email + "\'" + ',' + o.isActive + ')" > <i class="glyphicon glyphicon-pencil"></i></a ></div>'
+
+
+
+
+
+                            }
+                        }
+                    ]
+                });
+
+                t.on('order.dt search.dt', function () {
+                    t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }).draw();
+            }
+        });
+    }
+    $(document).ready(function () {
+        GetCategories();
+    });
+
+
+    function select(id, name, email, isActive) {
+        $('#name1').val(name);
+        $('#email1').val(email);
+        $('#id1').val(id);
+        $('#RdisActive1').prop('checked', isActive);
+
+
+    }
+    function Save() {
+
+        var Type = {};
+        Type.name = $('#name').val();
+        Type.email = $('#email').val();
+        if ($('#RdisActive').is(":checked")) {
+            Type.isActive = true;
+        }
+        else {
+            Type.isActive = false;
+        }
+        //	Type.isActive = $('.RdisActive').val();
+
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:62038/api/User/AddUser',
+            data: JSON.stringify(Type),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response === false) {
+
+                    $("#errorModalAdd p").text("Added Before");
+                    $('#errorModalAdd').show().delay(3000).fadeOut();
+                    return false;
+                }
+
+                $('#ModalAdd').modal('toggle');
+                $("#SuccModal h3").text(" Added Successfully");
+                $('#SuccModal').show().delay(3000).fadeOut();
+                GetCategories();
+                $('#name').val('');
+                $('#RdisActive').prop('checked', false);
+            },
+            error: function (response) {
+                var messages = [];
+                console.log(response);
+                $.each(response.responseJSON, function(i, ele) {
+                    console.log(ele)
+                    ele.map((e) => {
+                        messages.push(e);
+                    })
+                })
+                console.log(messages)
+                $("#errorModalAdd p").empty();
+                $.each(messages, function (key, value) {
+                    $("#errorModalAdd p").append(value);
+                    $("#errorModalAdd p").append('<br>');
+
+
+                    
+                })
+
+                $('#errorModalAdd').show().delay(3000).fadeOut();
+
+
+            }
+        });
+    }
+
+
+    function Edit() {
+
+
+        var user = {};
+        user.id = $('#id1').val();
+        user.name = $('#name1').val();
+        user.email = $('#email1').val();
+        if ($('#RdisActive1').is(":checked")) {
+            user.isActive = true;
+        }
+        else {
+            user.isActive = false;
+        }
+        //	Type.isActive = $('.RdisActive').val();
+
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:62038/api/User/EditUser',
+            data: JSON.stringify(user),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response === false) {
+
+                    $("#errorModalEdit p").text("Added Before");
+                    $('#errorModalEdit').show().delay(3000).fadeOut();
+                    return false;
+                }
+                $('#ModalEdit').modal('toggle');
+                $("#SuccModal h3").text(" Updated Successfully");
+                $('#SuccModal').show().delay(3000).fadeOut();
+                GetCategories();
+                $('#name1').val('');
+                $('#RdisActive1').prop('checked', false);
+                $('#email1').val('');
+
+            },
+            error: function (response) {
+                var messages = [];
+                console.log(response);
+                $.each(response.responseJSON, function (i, ele) {
+                    console.log(ele)
+                    ele.map((e) => {
+                        messages.push(e);
+                    })
+                })
+                console.log(messages)
+                $("#errorModalEdit p").empty();
+                $.each(messages, function (key, value) {
+                    $("#errorModalEdit p").append(value);
+                    $("#errorModalEdit p").append('<br>');
+
+
+
+                })
+
+                $('#errorModalEdit').show().delay(3000).fadeOut();
+
+
+            }        });
+    }
+
+    function OpenModal() {
+        $('#email').val('');
+        $('#name').val('');
+        $('#RdisActive').prop('checked', false);
+    }
+
+
+</script>
